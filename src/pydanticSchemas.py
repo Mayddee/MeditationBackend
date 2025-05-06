@@ -32,7 +32,7 @@ class MeditationOut(MeditationBase):
     section: SectionOut
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # --- Diary ---
 class DiaryCreate(BaseModel):
