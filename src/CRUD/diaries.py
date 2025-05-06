@@ -1,0 +1,55 @@
+import uuid
+from datetime import datetime
+
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
+
+from src.ORMmodels import User, Diary
+from src.database import SessionDep, get_session
+from src.pydanticSchemas import DiaryOut, DiaryCreate, DiaryUpdate
+
+router = APIRouter()
+
+SessionDep = Depends(get_session)
+
+@router.post("/diary/{user_id}", response_model=DiaryOut)
+async def create_diary(user_id: str, data: DiaryCreate, session: AsyncSession = SessionDep):
+    diary = Diary(**data.dict(), user_id=user_id)
+    session.add(diary)
+    await session.commit()
+    await session.refresh(diary)
+    return diary
+
+@router.get("/diary/{user_id}", response_model=list[DiaryOut])
+async def get_all_diaries(user_id: str, session: AsyncSession = SessionDep):
+    result = await session.execute(select(Diary).where(Diary.user_id == user_id))
+    return result.scalars().all()
+
+@router.get("/diary/{user_id}/{diary_id}", response_model=DiaryOut)
+async def get_diary(user_id: str, diary_id: str, session: AsyncSession = SessionDep):
+    diary = await session.get(Diary, diary_id)
+    if not diary or diary.user_id != user_id:
+        raise HTTPException(status_code=404, detail="Diary not found")
+    return diary
+
+@router.put("/diary/{user_id}/{diary_id}", response_model=DiaryOut)
+async def update_diary(user_id: str, diary_id: str, data: DiaryUpdate, session: AsyncSession = SessionDep):
+    diary = await session.get(Diary, diary_id)
+    if not diary or diary.user_id != user_id:
+        raise HTTPException(status_code=404, detail="Diary not found")
+    for key, value in data.dict(exclude_unset=True).items():
+        setattr(diary, key, value)
+    await session.commit()
+    await session.refresh(diary)
+    return diary
+
+@router.delete("/diary/{user_id}/{diary_id}")
+async def delete_diary(user_id: str, diary_id: str, session: AsyncSession = SessionDep):
+    diary = await session.get(Diary, diary_id)
+    if not diary or diary.user_id != user_id:
+        raise HTTPException(status_code=404, detail="Diary not found")
+    await session.delete(diary)
+    await session.commit()
+    return {"status": "deleted"}
