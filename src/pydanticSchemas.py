@@ -5,22 +5,22 @@ import uvicorn
 
 class SectionCreate(BaseModel):
     title: str
+    subtitle: str | None = None
     duration: str | None = None
     image_url: str | None = None
 
 class SectionOut(SectionCreate):
-    id: int
+    id: int  # только на выходе
 
     class Config:
         from_attributes = True
-
 # --- Meditation ---
 class MeditationBase(BaseModel):
     title: str
     duration_sec: int
     theme: str
     drive_id: str
-    image_url: str | None
+    image_url: str | None = None
     section_id: int | None = None
 
 class MeditationCreate(MeditationBase):
@@ -29,11 +29,10 @@ class MeditationCreate(MeditationBase):
 class MeditationOut(MeditationBase):
     id: int
     download_url: str
-    section: SectionOut
+    section: SectionOut | None = None
 
     class Config:
         from_attributes = True
-
 # --- Diary ---
 class DiaryCreate(BaseModel):
     title: str
@@ -43,8 +42,8 @@ class DiaryCreate(BaseModel):
 
 class DiaryUpdate(BaseModel):
     title: str | None = None
-    content: str | None  = None
-    mood: str | None  = None
+    content: str | None = None
+    mood: int | None = None
 
 class DiaryOut(BaseModel):
     id: str

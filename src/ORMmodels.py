@@ -1,10 +1,12 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, Text, DateTime, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, DeclarativeBase
 from datetime import datetime, timedelta
 import uuid
 
-from src.database import Base
 
+
+class Base(DeclarativeBase):
+    pass
 
 class User(Base):
     __tablename__ = "users"
@@ -20,13 +22,14 @@ class User(Base):
 
 class Section(Base):
     __tablename__ = "sections"
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String, nullable=False)
-    duration = Column(String, nullable=True)         # e.g. "3–10 MIN"
-    image_url = Column(String, nullable=True)        # Google Drive link
+    subtitle = Column(String, nullable=True)
+    duration = Column(String, nullable=True)
+    image_url = Column(String, nullable=True)
 
     meditations = relationship("Meditation", back_populates="section")
-
 
 class Meditation(Base):
     __tablename__ = "meditations"
@@ -37,7 +40,7 @@ class Meditation(Base):
     drive_id = Column(String, nullable=False)
     image_url = Column(String, nullable=True)  # обложка проигрывателя
 
-    section_id = Column(Integer, ForeignKey("sections.id"))
+    section_id = Column(Integer, ForeignKey("sections.id"), nullable=True)
     section = relationship("Section", back_populates="meditations")
 
     def download_url(self):
