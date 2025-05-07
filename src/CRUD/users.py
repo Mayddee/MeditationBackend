@@ -3,8 +3,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
-from src.ORMmodels import User
-from src.database import get_session
+from src.ORMmodels import User, Base
+from src.database import get_session, engine
+
 # from src.database_async import get_async_session
 
 router = APIRouter()
@@ -31,6 +32,11 @@ router = APIRouter()
 #     return {"status": "user deleted"}
 
 
+@router.post("/setup_database")
+def setup_database():
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    return {"success": True}
 
 # SYNC
 @router.post("/users/{user_id}")
