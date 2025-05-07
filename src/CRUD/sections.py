@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from src.ORMmodels import Section
-from src.database import get_session
+# from src.database import get_session
 from src.database_async import get_async_session
 from src.pydanticSchemas import SectionCreate, SectionOut
 

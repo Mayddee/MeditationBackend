@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from src.ORMmodels import User, Diary
-from src.database import get_session
+# from src.database import get_session
 from src.database_async import get_async_session
 from src.pydanticSchemas import DiaryOut, DiaryCreate, DiaryUpdate
 

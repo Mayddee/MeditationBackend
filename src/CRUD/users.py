@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from src.ORMmodels import User
-from src.database import get_session
+# from src.database import get_session
 from src.database_async import get_async_session
 
 router = APIRouter()
