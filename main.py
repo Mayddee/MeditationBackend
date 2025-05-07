@@ -5,7 +5,7 @@ from src.CRUD.diaries import router as diaries_router
 from src.CRUD.users import router as users_router
 from src.CRUD.meditations import router as meditations_router
 from src.CRUD.sections import router as sections_router
-from src.database_async import router as database_router
+from src.database import router as database_router
 app = FastAPI()
 
 # app.add_middleware(
