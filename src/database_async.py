@@ -11,7 +11,7 @@ router = APIRouter()
 
 load_dotenv()
 
-URL_DATABASE_ASYNC = os.getenv("DATABASE_URL_ASYNC")
+URL_DATABASE_ASYNC = os.getenv("DATABASE_URL")
 async_engine = create_async_engine(URL_DATABASE_ASYNC)
 
 # async_engine = create_async_engine(settings.DATABASE_URL_asyncpg, echo=True)
