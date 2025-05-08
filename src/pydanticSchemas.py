@@ -3,6 +3,13 @@ from pydantic import BaseModel
 from datetime import datetime
 import uvicorn
 
+
+class UserOut(BaseModel):
+    id: str
+
+    class Config:
+        from_attributes = True
+
 class SectionCreate(BaseModel):
     title: str
     subtitle: str | None = None

@@ -90,7 +90,7 @@ router = APIRouter()
 
 #SYNC
 
-@router.post("/diary/{user_id}", response_model=DiaryOut)
+@router.post("/diary/{user_id}", response_model=DiaryOut, tags=["Diaries"])
 def create_diary(user_id: str, data: DiaryCreate, session: Session = Depends(get_session)):
     diary = Diary(**data.dict(), user_id=user_id)
     session.add(diary)
@@ -98,21 +98,21 @@ def create_diary(user_id: str, data: DiaryCreate, session: Session = Depends(get
     session.refresh(diary)
     return diary
 
-@router.get("/diary/{user_id}", response_model=List[DiaryOut])
+@router.get("/diary/{user_id}", response_model=List[DiaryOut], tags=["Diaries"])
 def get_all_diaries(user_id: str, session: Session = Depends(get_session)):
     diaries = session.execute(
         select(Diary).where(Diary.user_id == user_id).order_by(Diary.date.desc())
     ).scalars().all()
     return diaries
 
-@router.get("/diary/{user_id}/{diary_id}", response_model=DiaryOut)
+@router.get("/diary/{user_id}/{diary_id}", response_model=DiaryOut, tags=["Diaries"])
 def get_diary(user_id: str, diary_id: str, session: Session = Depends(get_session)):
     diary = session.get(Diary, diary_id)
     if not diary or diary.user_id != user_id:
         raise HTTPException(status_code=404, detail="Diary not found")
     return diary
 
-@router.put("/diary/{user_id}/{diary_id}", response_model=DiaryOut)
+@router.put("/diary/{user_id}/{diary_id}", response_model=DiaryOut, tags=["Diaries"])
 def update_diary(user_id: str, diary_id: str, data: DiaryUpdate, session: Session = Depends(get_session)):
     diary = session.get(Diary, diary_id)
     if not diary or diary.user_id != user_id:
@@ -123,7 +123,7 @@ def update_diary(user_id: str, diary_id: str, data: DiaryUpdate, session: Sessio
     session.refresh(diary)
     return diary
 
-@router.delete("/diary/{user_id}/{diary_id}")
+@router.delete("/diary/{user_id}/{diary_id}", tags=["Diaries"])
 def delete_diary(user_id: str, diary_id: str, session: Session = Depends(get_session)):
     diary = session.get(Diary, diary_id)
     if not diary or diary.user_id != user_id:

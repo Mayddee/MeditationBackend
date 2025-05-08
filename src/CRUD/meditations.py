@@ -161,7 +161,7 @@ router = APIRouter()
 
 
 # SYNC
-@router.get("/meditations/search", response_model=list[MeditationOut])
+@router.get("/meditations/search", response_model=list[MeditationOut], tags=["Meditations"])
 def search_meditations(query: str = Query(..., min_length=1), session: Session = Depends(get_session)):
     result = session.execute(
         select(Meditation).options(joinedload(Meditation.section)).where(
@@ -182,7 +182,7 @@ def search_meditations(query: str = Query(..., min_length=1), session: Session =
         ) for m in result.scalars()
     ]
 
-@router.post("/meditations/", response_model=MeditationOut)
+@router.post("/meditations/", response_model=MeditationOut, tags=["Meditations"])
 def create_meditation(data: MeditationCreate, session: Session = Depends(get_session)):
     meditation = Meditation(**data.dict())
     session.add(meditation)
@@ -200,7 +200,7 @@ def create_meditation(data: MeditationCreate, session: Session = Depends(get_ses
         download_url=meditation.download_url()
     )
 
-@router.get("/meditations/", response_model=list[MeditationOut])
+@router.get("/meditations/", response_model=list[MeditationOut], tags=["Meditations"])
 def get_all_meditations(session: Session = Depends(get_session)):
     result = session.execute(select(Meditation).options(joinedload(Meditation.section)))
     return [
@@ -217,7 +217,7 @@ def get_all_meditations(session: Session = Depends(get_session)):
         ) for m in result.scalars()
     ]
 
-@router.get("/meditations/{meditation_id}", response_model=MeditationOut)
+@router.get("/meditations/{meditation_id}", response_model=MeditationOut, tags=["Meditations"])
 def get_meditation(meditation_id: int, session: Session = Depends(get_session)):
     result = session.execute(select(Meditation).options(joinedload(Meditation.section)).where(Meditation.id == meditation_id))
     m = result.scalar_one_or_none()
@@ -235,7 +235,7 @@ def get_meditation(meditation_id: int, session: Session = Depends(get_session)):
         download_url=m.download_url()
     )
 
-@router.put("/meditations/{meditation_id}", response_model=MeditationOut)
+@router.put("/meditations/{meditation_id}", response_model=MeditationOut, tags=["Meditations"])
 def update_meditation(meditation_id: int, data: MeditationBase, session: Session = Depends(get_session)):
     result = session.execute(select(Meditation).where(Meditation.id == meditation_id))
     m = result.scalar_one_or_none()
@@ -257,7 +257,7 @@ def update_meditation(meditation_id: int, data: MeditationBase, session: Session
         download_url=m.download_url()
     )
 
-@router.delete("/meditations/{meditation_id}")
+@router.delete("/meditations/{meditation_id}", tags=["Meditations"])
 def delete_meditation(meditation_id: int, session: Session = Depends(get_session)):
     result = session.execute(select(Meditation).where(Meditation.id == meditation_id))
     m = result.scalar_one_or_none()
@@ -267,13 +267,13 @@ def delete_meditation(meditation_id: int, session: Session = Depends(get_session
     session.commit()
     return {"status": "meditation deleted"}
 
-@router.post("/favorites/{user_id}/{meditation_id}")
+@router.post("/favorites/{user_id}/{meditation_id}", tags=["Favourites"])
 def add_favorite(user_id: str, meditation_id: int, session: Session = Depends(get_session)):
     session.add(Favorite(user_id=user_id, meditation_id=meditation_id))
     session.commit()
     return {"status": "added to favorites"}
 
-@router.delete("/favorites/{user_id}/{meditation_id}")
+@router.delete("/favorites/{user_id}/{meditation_id}", tags=["Favourites"])
 def remove_favorite(user_id: str, meditation_id: int, session: Session = Depends(get_session)):
     result = session.execute(
         select(Favorite).where(Favorite.user_id == user_id, Favorite.meditation_id == meditation_id)

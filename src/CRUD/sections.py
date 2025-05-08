@@ -61,7 +61,7 @@ router = APIRouter()
 
 
 # SYNC
-@router.post("/sections/", response_model=SectionOut)
+@router.post("/sections/", response_model=SectionOut, tags=["Sections"])
 def create_section(data: SectionCreate, session: Session = Depends(get_session)):
     section = Section(**data.dict())
     session.add(section)
@@ -69,12 +69,12 @@ def create_section(data: SectionCreate, session: Session = Depends(get_session))
     session.refresh(section)
     return section
 
-@router.get("/sections/", response_model=List[SectionOut])
+@router.get("/sections/", response_model=List[SectionOut], tags=["Sections"])
 def get_all_sections(session: Session = Depends(get_session)):
     result = session.execute(select(Section))
     return result.scalars().all()
 
-@router.get("/sections/{section_id}", response_model=SectionOut)
+@router.get("/sections/{section_id}", response_model=SectionOut, tags=["Sections"])
 def get_section(section_id: int, session: Session = Depends(get_session)):
     result = session.execute(select(Section).where(Section.id == section_id))
     section = result.scalar_one_or_none()
@@ -82,7 +82,7 @@ def get_section(section_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Section not found")
     return section
 
-@router.put("/sections/{section_id}", response_model=SectionOut)
+@router.put("/sections/{section_id}", response_model=SectionOut, tags=["Sections"])
 def update_section(section_id: int, data: SectionCreate, session: Session = Depends(get_session)):
     result = session.execute(select(Section).where(Section.id == section_id))
     section = result.scalar_one_or_none()
@@ -94,7 +94,7 @@ def update_section(section_id: int, data: SectionCreate, session: Session = Depe
     session.refresh(section)
     return section
 
-@router.delete("/sections/{section_id}")
+@router.delete("/sections/{section_id}", response_model=SectionOut, tags=["Sections"])
 def delete_section(section_id: int, session: Session = Depends(get_session)):
     result = session.execute(select(Section).where(Section.id == section_id))
     section = result.scalar_one_or_none()
