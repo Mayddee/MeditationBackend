@@ -32,11 +32,11 @@ router = APIRouter()
 #     return {"status": "user deleted"}
 
 
-# @router.post("/setup_database")
-# def setup_database():
-#     Base.metadata.drop_all(bind=engine)
-#     Base.metadata.create_all(bind=engine)
-#     return {"success": True}
+@router.post("/setup_database")
+def setup_database():
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+    return {"success": True}
 
 # SYNC
 @router.post("/users/{user_id}")
