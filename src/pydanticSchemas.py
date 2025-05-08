@@ -52,6 +52,10 @@ class DiaryUpdate(BaseModel):
     content: str | None = None
     mood: int | None = None
 
+class DiaryPatch(BaseModel):
+    title: str | None = None
+    content: str | None = None
+
 class DiaryOut(BaseModel):
     id: str
     user_id: str

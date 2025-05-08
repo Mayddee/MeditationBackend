@@ -10,8 +10,7 @@ from typing import List
 from src.ORMmodels import User, Diary
 from src.database import get_session
 # from src.database_async import get_async_session
-from src.pydanticSchemas import DiaryOut, DiaryCreate, DiaryUpdate
-
+from src.pydanticSchemas import DiaryOut, DiaryCreate, DiaryUpdate, DiaryPatch
 
 # SessionDep = Depends(get_session)
 
@@ -112,6 +111,25 @@ def get_diary(user_id: str, diary_id: str, session: Session = Depends(get_sessio
         raise HTTPException(status_code=404, detail="Diary not found")
     return diary
 
+@router.patch("/diary/{user_id}/{diary_id}", response_model=DiaryOut, tags=["Diaries"])
+def patch_diary(
+    user_id: str,
+    diary_id: str,
+    data: DiaryPatch,
+    session: Session = Depends(get_session)
+):
+    diary = session.get(Diary, diary_id)
+    if not diary or diary.user_id != user_id:
+        raise HTTPException(status_code=404, detail="Diary not found")
+
+    update_data = data.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(diary, key, value)
+
+    diary.updated_at = datetime.utcnow()  # Обновляем время
+    session.commit()
+    session.refresh(diary)
+    return diary
 @router.put("/diary/{user_id}/{diary_id}", response_model=DiaryOut, tags=["Diaries"])
 def update_diary(user_id: str, diary_id: str, data: DiaryUpdate, session: Session = Depends(get_session)):
     diary = session.get(Diary, diary_id)
