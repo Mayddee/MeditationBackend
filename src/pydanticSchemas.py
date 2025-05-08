@@ -23,10 +23,10 @@ class SectionOut(SectionCreate):
         from_attributes = True
 # --- Meditation ---
 class MeditationBase(BaseModel):
-    title: str
+    title: str | None = None
     duration_sec: int
-    theme: str
-    drive_id: str
+    theme: str | None = None
+    drive_id: str | None = None
     image_url: str | None = None
     section_id: int | None = None
 
