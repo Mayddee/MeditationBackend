@@ -44,7 +44,7 @@ class Meditation(Base):
     section = relationship("Section", back_populates="meditations")
 
     def download_url(self):
-        return f"https://drive.google.com/uc?export=download&id={self.drive_id}"
+        return self.drive_id
 
 
 
