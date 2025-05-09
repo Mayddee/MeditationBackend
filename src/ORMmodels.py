@@ -31,6 +31,8 @@ class Section(Base):
 
     meditations = relationship("Meditation", back_populates="section")
 
+
+
 class Meditation(Base):
     __tablename__ = "meditations"
     id = Column(Integer, primary_key=True, autoincrement=True)

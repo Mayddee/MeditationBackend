@@ -2,6 +2,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 import uvicorn
+from typing import List
 
 
 class UserOut(BaseModel):
@@ -10,17 +11,7 @@ class UserOut(BaseModel):
     class Config:
         from_attributes = True
 
-class SectionCreate(BaseModel):
-    title: str
-    subtitle: str | None = None
-    duration: str | None = None
-    image_url: str | None = None
 
-class SectionOut(SectionCreate):
-    id: int  # только на выходе
-
-    class Config:
-        from_attributes = True
 # --- Meditation ---
 class MeditationBase(BaseModel):
     title: str | None = None
@@ -36,7 +27,36 @@ class MeditationCreate(MeditationBase):
 class MeditationOut(MeditationBase):
     id: int
     download_url: str
-    section: SectionOut | None = None
+    # section: SectionOut | None = None
+
+    class Config:
+        from_attributes = True
+
+class MeditationShortOut(BaseModel):
+    id: int
+    title: str
+    duration_sec: int
+    theme: str
+    drive_id: str
+    image_url: str | None = None
+    section_id: int | None = None
+
+    class Config:
+        from_attributes = True
+
+class SectionCreate(BaseModel):
+    title: str
+    subtitle: str | None = None
+    duration: str | None = None
+    image_url: str | None = None
+
+class SectionOut(BaseModel):
+    id: int
+    title: str
+    subtitle: str | None
+    duration: str | None
+    image_url: str | None
+    meditations: List[MeditationShortOut] = []
 
     class Config:
         from_attributes = True

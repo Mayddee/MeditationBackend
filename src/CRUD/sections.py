@@ -5,7 +5,7 @@ from sqlalchemy import select
 from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from src.ORMmodels import Section
 from src.database import get_session
@@ -103,3 +103,15 @@ def delete_section(section_id: int, session: Session = Depends(get_session)):
     session.delete(section)
     session.commit()
     return {"status": "section deleted"}
+
+@router.get("/sections/{section_id}", response_model=SectionOut, tags=["Sections"])
+def get_section_with_meditations(section_id: int, session: Session = Depends(get_session)):
+    result = session.execute(
+        select(Section)
+        .options(joinedload(Section.meditations))
+        .where(Section.id == section_id)
+    )
+    section = result.scalar_one_or_none()
+    if not section:
+        raise HTTPException(status_code=404, detail="Section not found")
+    return section
